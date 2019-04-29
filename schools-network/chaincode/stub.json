@@ -1,0 +1,78 @@
+{
+    "AddStudentDetails" : [
+                            "AddStudentDetails",
+                            "Lakshay Bhambri",
+                            "23-06-1995",
+                            "MALE",
+                            "Vinay Bhambri",
+                            "Vimmi Bhambri"
+                          ],
+    "UpdateStudentDetails" : [
+                            "UpdateStudentDetails",
+                            "<Student ID>",
+                            "Lakshay Bhambri",
+                            "23-06-1995",
+                            "MALE",
+                            "Vinay Bhambri",
+                            "Vimmi Bhambri"
+                          ],
+    "DeleteStudentDetails" : [
+                                "DeleteStudentDetails",
+                                "<Student ID>"
+                             ],
+    "GetStudentDetails" : [
+                              "GetStudentDetails",
+                              "<Student ID>"
+                          ],
+    "InitiateSchoolLeavingRequest" : [
+                              "AddSchoolLeavingRequest",
+                              "<Student Id>",
+                              "<CBSE Remark>"
+                          ],
+    "ResubmitSchoolLeavingRequest" : [
+                              "ResubmitSchoolLeavingRequest",
+                              "<Application ID>",
+                              "<CBSE Remark>"
+                          ],
+    "GetSchoolLeavingRequests" : [
+                              "GetSchoolLeavingRequests"
+                          ],
+    "InitiateSchoolAdmissionRequest" : [
+                            "InitiateSchoolAdmissionRequest",
+                            "<Student Id>",
+                            "Lakshay Bhambri",
+                            "23-06-1995",
+                            "MALE",
+                            "Vinay Bhambri",
+                            "Vimmi Bhambri",
+                            "<CBSE Remark>"
+                        ],
+    "ResubmitSchoolAdmissionRequest" : [
+                          "ResubmitSchoolAdmissionRequest",
+                          "<Application ID>",
+                          "<CBSE Remark>"
+                      ],
+    "GetSchoolAdmissionRequests" : [
+                          "GetSchoolAdmissionRequests"
+                      ],
+    "RejectSchoolLeavingApplication" : [
+                          "RejectSchoolLeavingApplication",
+                          "<Application ID>",
+                          "<school Remark>"
+                      ],
+    "AcceptSchoolLeavingApplication" : [
+                          "AcceptSchoolLeavingApplication",
+                          "<Application ID>",
+                          "<school Remark>"
+    ],
+    "RejectSchoolAdmissionApplication" : [
+          "RejectSchoolAdmissionApplication",
+          "<Application ID>",
+          "<school Remark>"
+      ],
+    "AcceptSchoolAdmissionApplication" : [
+          "AcceptSchoolAdmissionApplication",
+          "<Application ID>",
+          "<school Remark>"
+      ]
+}

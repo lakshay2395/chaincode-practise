@@ -1,0 +1,28 @@
+OrdererOrgs:
+  - Name: NICOrderer
+    Domain: nic.in
+    Specs:
+      - Hostname: orderer
+
+PeerOrgs:
+  - Name: CBSEOrg
+    Domain: cbseorg.nic.in
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 2
+  - Name: SchoolOneOrg
+    Domain: schooloneorg.school.nic.in
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+  - Name: SchoolTwoOrg
+    Domain: schooltwoorg.school.nic.in
+    Template:
+      Count: 1
+    Users:
+      Count: 1
+

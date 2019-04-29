@@ -1,0 +1,135 @@
+version: '2'
+
+services:
+
+  orderer.nic.in:
+    container_name: orderer.nic.in
+    image: hyperledger/fabric-orderer:latest
+    environment:
+      - ORDERER_GENERAL_LOGLEVEL=INFO
+      - ORDERER_GENERAL_LISTENADDRESS=0.0.0.0
+      - ORDERER_GENERAL_GENESISMETHOD=file
+      - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
+      - ORDERER_GENERAL_LOCALMSPID=NICOrdererOrg
+      - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
+      - ORDERER_GENERAL_TLS_ENABLED=true
+      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
+      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
+      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
+    working_dir: /opt/gopath/src/github.com/hyperledger/fabric
+    command: orderer
+    volumes:
+      - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
+      - ./crypto-config/ordererOrganizations/nic.in/orderers/orderer.nic.in/msp:/var/hyperledger/orderer/msp
+      - ./crypto-config/ordererOrganizations/nic.in/orderers/orderer.nic.in/tls/:/var/hyperledger/orderer/tls
+      # - orderer.nic.in:/var/hyperledger/production/orderer
+    ports:
+      - 7050:7050
+
+  couchdb0:
+    container_name: couchdb0
+    image: hyperledger/fabric-couchdb
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - 5984:5984
+
+  peer0.cbseorg.nic.in:
+    container_name: peer0.cbseorg.nic.in
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
+      - CORE_PEER_ID=peer0.cbseorg.nic.in
+      - CORE_PEER_ADDRESS=peer0.cbseorg.nic.in:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.cbseorg.nic.in:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.cbseorg.nic.in:7051
+      - CORE_PEER_LOCALMSPID=CBSEOrg
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/cbseorg.nic.in/peers/peer0.cbseorg.nic.in/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/cbseorg.nic.in/peers/peer0.cbseorg.nic.in/tls:/etc/hyperledger/fabric/tls
+      # - peer0.cbseorg.nic.in:/var/hyperledger/production
+    ports:
+      - 7051:7051
+      - 7053:7053
+      - 7055:6060
+
+  couchdb1:
+    container_name: couchdb1
+    image: hyperledger/fabric-couchdb
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - 6984:5984
+
+  peer0.schooloneorg.school.nic.in:
+    container_name: peer0.schooloneorg.school.nic.in
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:6984
+      - CORE_PEER_ID=peer0.schooloneorg.school.nic.in
+      - CORE_PEER_ADDRESS=peer0.schooloneorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.schooloneorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.schooloneorg.school.nic.in:7051
+      - CORE_PEER_LOCALMSPID=SchoolOneOrg
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/peers/peer0.schooloneorg.school.nic.in/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/peers/peer0.schooloneorg.school.nic.in/tls:/etc/hyperledger/fabric/tls
+      # - peer0.schooloneorg.school.nic.in:/var/hyperledger/production
+    ports:
+      - 8051:7051
+      - 8053:7053
+      - 8055:6060
+  
+  couchdb2:
+    container_name: couchdb2
+    image: hyperledger/fabric-couchdb
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - 7984:5984
+
+  peer0.schooltwoorg.school.nic.in:
+    container_name: peer0.schooltwoorg.school.nic.in
+    extends:
+      file: peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:7984
+      - CORE_PEER_ID=peer0.schooltwoorg.school.nic.in
+      - CORE_PEER_ADDRESS=peer0.schooltwoorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.schooltwoorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.schooltwoorg.school.nic.in:7051
+      - CORE_PEER_LOCALMSPID=SchoolTwoOrg
+    volumes:
+      - /var/run/:/host/var/run/
+      - ./crypto-config/peerOrganizations/schooltwoorg.school.nic.in/peers/peer0.schooltwoorg.school.nic.in/msp:/etc/hyperledger/fabric/msp
+      - ./crypto-config/peerOrganizations/schooltwoorg.school.nic.in/peers/peer0.schooltwoorg.school.nic.in/tls:/etc/hyperledger/fabric/tls
+      # - peer0.schooltwoorg.school.nic.in:/var/hyperledger/production
+    ports:
+      - 9051:7051
+      - 9053:7053
+      - 9055:6060

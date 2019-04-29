@@ -1,0 +1,158 @@
+Organizations:
+    - &NICOrdererOrg
+        Name: NICOrdererOrg
+        ID: NICOrdererOrg
+        MSPDir: crypto-config/ordererOrganizations/nic.in/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('NICOrdererOrg.admin', 'NICOrdererOrg.peer', 'NICOrdererOrg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('NICOrdererOrg.admin', 'NICOrdererOrg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('NICOrdererOrg.admin')"
+    - &CBSEOrg
+        Name: CBSEOrg
+        ID: CBSEOrg
+        MSPDir: crypto-config/peerOrganizations/cbseorg.nic.in/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('CBSEOrg.admin', 'CBSEOrg.peer', 'CBSEOrg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('CBSEOrg.admin', 'CBSEOrg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('CBSEOrg.admin')"
+        AnchorPeers:
+            - Host: peer0.cbseorg.nic.in
+              Port: 7051
+    - &SchoolOneOrg
+        Name: SchoolOneOrg
+        ID: SchoolOneOrg
+        MSPDir: crypto-config/peerOrganizations/schooloneorg.school.nic.in/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('SchoolOneOrg.admin', 'SchoolOneOrg.peer', 'SchoolOneOrg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('SchoolOneOrg.admin', 'SchoolOneOrg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('SchoolOneOrg.admin')"
+        AnchorPeers:
+            - Host: peer0.schooloneorg.school.nic.in
+              Port: 7051
+    - &SchoolTwoOrg
+        Name: SchoolTwoOrg
+        ID: SchoolTwoOrg
+        MSPDir: crypto-config/peerOrganizations/schooltwoorg.school.nic.in/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('SchoolTwoOrg.admin', 'SchoolTwoOrg.peer', 'SchoolTwoOrg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('SchoolTwoOrg.admin', 'SchoolTwoOrg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('SchoolTwoOrg.admin')"
+        AnchorPeers:
+            - Host: peer0.schooltwoorg.school.nic.in
+              Port: 7051
+Orderer: &OrdererDefaults
+    OrdererType: solo
+    Addresses:
+        - orderer.nic.in:7050
+    BatchTimeout: 2s
+    BatchSize:
+        MaxMessageCount: 10
+        AbsoluteMaxBytes: 99 MB
+        PreferredMaxBytes: 512 KB
+    Kafka:
+        Brokers:
+            - 127.0.0.1:9092
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+        BlockValidation:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+Application: &ApplicationDefaults
+    Organizations:
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+Channel: &ChannelDefaults
+    Policies:
+        Readers:
+            Type: ImplicitMeta
+            Rule: "ANY Readers"
+        Writers:
+            Type: ImplicitMeta
+            Rule: "ANY Writers"
+        Admins:
+            Type: ImplicitMeta
+            Rule: "ANY Admins"
+Capabilities:
+    Global: &ChannelCapabilities
+        V1_1: true
+    Orderer: &OrdererCapabilities
+        V1_1: true
+    Application: &ApplicationCapabilities
+        V1_2: true
+Profiles:
+    NICOrdererGenesis:
+        <<: *ChannelDefaults
+        Capabilities:
+            <<: *ChannelCapabilities
+        Orderer:
+            <<: *OrdererDefaults
+            Organizations:
+                - *NICOrdererOrg
+            Capabilities:
+                <<: *OrdererCapabilities
+        Consortiums:
+            SchoolsConsortium:
+                Organizations:
+                    - *CBSEOrg
+                    - *SchoolOneOrg
+                    - *SchoolTwoOrg
+    SchoolOneOrgChannel:
+        Consortium: SchoolsConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *CBSEOrg
+                - *SchoolOneOrg
+            Capabilities:
+                <<: *ApplicationCapabilities
+    SchoolTwoOrgChannel:
+        Consortium: SchoolsConsortium
+        Application:
+            <<: *ApplicationDefaults
+            Organizations:
+                - *CBSEOrg
+                - *SchoolTwoOrg
+            Capabilities:
+                <<: *ApplicationCapabilities
+    
