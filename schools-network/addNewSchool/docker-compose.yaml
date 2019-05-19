@@ -1,0 +1,63 @@
+version: '2'
+
+networks:
+  schools:
+
+volumes:
+  peer0.schoolthreeorg.school.nic.in:
+  
+services:
+  schoolthree-ca:
+    image: hyperledger/fabric-ca:latest
+    environment:
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
+      - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
+      - FABRIC_CA_SERVER_CA_NAME=ca-schoolthreeorg
+    ports:
+      - "10054:7054"
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.cbseorg.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/684b54dccef67f5d52054c5d0532870c1fb5090a204fb8e14bd4ba303f8c279e_sk -b admin:adminpw -d'
+    volumes:
+      - ../network/crypto-config/peerOrganizations/schoolthreeorg.school.nic.in/ca/:/etc/hyperledger/fabric-ca-server-config
+    container_name: ca_peerSchoolThreeOrg
+    networks:
+      - schools
+  
+  couchdb3:
+    container_name: couchdb3
+    image: hyperledger/fabric-couchdb
+    # Populate the COUCHDB_USER and COUCHDB_PASSWORD to set an admin user and password
+    # for CouchDB.  This will prevent CouchDB from operating in an "Admin Party" mode.
+    environment:
+      - COUCHDB_USER=
+      - COUCHDB_PASSWORD=
+    # Comment/Uncomment the port mapping if you want to hide/expose the CouchDB service,
+    # for example map it to utilize Fauxton User Interface in dev environments.
+    ports:
+      - 8984:5984
+    networks:
+      - schools
+
+  peer0.schoolthreeorg.school.nic.in:
+    container_name: peer0.schoolthreeorg.school.nic.in
+    extends:
+      file: ../network/peer-base.yaml
+      service: peer-base
+    environment:
+      - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb3:5984
+      - CORE_PEER_ID=peer0.schoolthreeorg.school.nic.in
+      - CORE_PEER_ADDRESS=peer0.schoolthreeorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.schoolthreeorg.school.nic.in:7051
+      - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.schoolthreeorg.school.nic.in:7051
+      - CORE_PEER_LOCALMSPID=SchoolThreeOrg
+    volumes:
+      - /var/run/:/host/var/run/
+      - ../network/crypto-config/peerOrganizations/schoolthreeorg.school.nic.in/peers/peer0.schoolthreeorg.school.nic.in/msp:/etc/hyperledger/fabric/msp
+      - ../network/crypto-config/peerOrganizations/schoolthreeorg.school.nic.in/peers/peer0.schoolthreeorg.school.nic.in/tls:/etc/hyperledger/fabric/tls
+      # - peer0.schoolthreeorg.school.nic.in:/var/hyperledger/production
+    ports:
+      - 10051:7051
+      - 10053:7053
+      - 10055:6060
+    networks:
+      - schools

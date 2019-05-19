@@ -1,0 +1,18 @@
+Organizations:
+    - &SchoolThreeOrg
+        Name: SchoolThreeOrg
+        ID: SchoolThreeOrg
+        MSPDir: ../network/crypto-config/peerOrganizations/schoolthreeorg.school.nic.in/msp
+        Policies:
+            Readers:
+                Type: Signature
+                Rule: "OR('SchoolThreeOrg.admin', 'SchoolThreeOrg.peer', 'SchoolThreeOrg.client')"
+            Writers:
+                Type: Signature
+                Rule: "OR('SchoolThreeOrg.admin','SchoolThreeOrg.peer','SchoolThreeOrg.client')"
+            Admins:
+                Type: Signature
+                Rule: "OR('SchoolThreeOrg.admin')"
+        AnchorPeers:
+            - Host: peer0.schoolthreeorg.school.nic.in
+              Port: 7051

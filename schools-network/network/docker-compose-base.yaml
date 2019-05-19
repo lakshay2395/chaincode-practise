@@ -12,16 +12,11 @@ services:
       - ORDERER_GENERAL_GENESISFILE=/var/hyperledger/orderer/orderer.genesis.block
       - ORDERER_GENERAL_LOCALMSPID=NICOrdererOrg
       - ORDERER_GENERAL_LOCALMSPDIR=/var/hyperledger/orderer/msp
-      - ORDERER_GENERAL_TLS_ENABLED=true
-      - ORDERER_GENERAL_TLS_PRIVATEKEY=/var/hyperledger/orderer/tls/server.key
-      - ORDERER_GENERAL_TLS_CERTIFICATE=/var/hyperledger/orderer/tls/server.crt
-      - ORDERER_GENERAL_TLS_ROOTCAS=[/var/hyperledger/orderer/tls/ca.crt]
     working_dir: /opt/gopath/src/github.com/hyperledger/fabric
     command: orderer
     volumes:
       - ./channel-artifacts/genesis.block:/var/hyperledger/orderer/orderer.genesis.block
       - ./crypto-config/ordererOrganizations/nic.in/orderers/orderer.nic.in/msp:/var/hyperledger/orderer/msp
-      - ./crypto-config/ordererOrganizations/nic.in/orderers/orderer.nic.in/tls/:/var/hyperledger/orderer/tls
       # - orderer.nic.in:/var/hyperledger/production/orderer
     ports:
       - 7050:7050
@@ -45,6 +40,7 @@ services:
       file: peer-base.yaml
       service: peer-base
     environment:
+      - GOPATH=/opt/gopath
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
       - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb0:5984
       - CORE_PEER_ID=peer0.cbseorg.nic.in
@@ -52,7 +48,10 @@ services:
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.cbseorg.nic.in:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.cbseorg.nic.in:7051
       - CORE_PEER_LOCALMSPID=CBSEOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_schools
     volumes:
+      - $GOPATH:/opt/gopath
       - /var/run/:/host/var/run/
       - ./crypto-config/peerOrganizations/cbseorg.nic.in/peers/peer0.cbseorg.nic.in/msp:/etc/hyperledger/fabric/msp
       - ./crypto-config/peerOrganizations/cbseorg.nic.in/peers/peer0.cbseorg.nic.in/tls:/etc/hyperledger/fabric/tls
@@ -82,16 +81,19 @@ services:
       service: peer-base
     environment:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:6984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb1:5984
       - CORE_PEER_ID=peer0.schooloneorg.school.nic.in
       - CORE_PEER_ADDRESS=peer0.schooloneorg.school.nic.in:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.schooloneorg.school.nic.in:7051
       - CORE_PEER_GOSSIP_EXTERNALENDPOINT=peer0.schooloneorg.school.nic.in:7051
       - CORE_PEER_LOCALMSPID=SchoolOneOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/fabric/msp/
+      - CORE_VM_DOCKER_HOSTCONFIG_NETWORKMODE=network_schools
     volumes:
       - /var/run/:/host/var/run/
       - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/peers/peer0.schooloneorg.school.nic.in/msp:/etc/hyperledger/fabric/msp
       - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/peers/peer0.schooloneorg.school.nic.in/tls:/etc/hyperledger/fabric/tls
+      # - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/users:/etc/hyperledger/fabric/msp/users
       # - peer0.schooloneorg.school.nic.in:/var/hyperledger/production
     ports:
       - 8051:7051
@@ -118,7 +120,7 @@ services:
       service: peer-base
     environment:
       - CORE_LEDGER_STATE_STATEDATABASE=CouchDB
-      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:7984
+      - CORE_LEDGER_STATE_COUCHDBCONFIG_COUCHDBADDRESS=couchdb2:5984
       - CORE_PEER_ID=peer0.schooltwoorg.school.nic.in
       - CORE_PEER_ADDRESS=peer0.schooltwoorg.school.nic.in:7051
       - CORE_PEER_GOSSIP_BOOTSTRAP=peer0.schooltwoorg.school.nic.in:7051

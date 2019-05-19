@@ -6,10 +6,10 @@ Organizations:
         Policies:
             Readers:
                 Type: Signature
-                Rule: "OR('NICOrdererOrg.admin', 'NICOrdererOrg.peer', 'NICOrdererOrg.client')"
+                Rule: "OR('NICOrdererOrg.member')"
             Writers:
                 Type: Signature
-                Rule: "OR('NICOrdererOrg.admin', 'NICOrdererOrg.client')"
+                Rule: "OR('NICOrdererOrg.member')"
             Admins:
                 Type: Signature
                 Rule: "OR('NICOrdererOrg.admin')"
@@ -23,7 +23,7 @@ Organizations:
                 Rule: "OR('CBSEOrg.admin', 'CBSEOrg.peer', 'CBSEOrg.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('CBSEOrg.admin', 'CBSEOrg.client')"
+                Rule: "OR('CBSEOrg.admin', 'CBSEOrg.peer','CBSEOrg.client')"
             Admins:
                 Type: Signature
                 Rule: "OR('CBSEOrg.admin')"
@@ -40,7 +40,7 @@ Organizations:
                 Rule: "OR('SchoolOneOrg.admin', 'SchoolOneOrg.peer', 'SchoolOneOrg.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('SchoolOneOrg.admin', 'SchoolOneOrg.client')"
+                Rule: "OR('SchoolOneOrg.admin','SchoolOneOrg.peer','SchoolOneOrg.client')"
             Admins:
                 Type: Signature
                 Rule: "OR('SchoolOneOrg.admin')"
@@ -57,7 +57,7 @@ Organizations:
                 Rule: "OR('SchoolTwoOrg.admin', 'SchoolTwoOrg.peer', 'SchoolTwoOrg.client')"
             Writers:
                 Type: Signature
-                Rule: "OR('SchoolTwoOrg.admin', 'SchoolTwoOrg.client')"
+                Rule: "OR('SchoolTwoOrg.admin', 'SchoolTwoOrg.peer','SchoolTwoOrg.client')"
             Admins:
                 Type: Signature
                 Rule: "OR('SchoolTwoOrg.admin')"

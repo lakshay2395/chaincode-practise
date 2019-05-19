@@ -1,0 +1,8 @@
+PeerOrgs:
+  - Name: SchoolThreeOrg
+    Domain: schoolthreeorg.school.nic.in
+    EnableNodeOUs: true
+    Template:
+      Count: 1
+    Users:
+      Count: 1

@@ -1,0 +1,8 @@
+NodeOUs:
+  Enable: true
+  ClientOUIdentifier:
+    Certificate: cacerts/ca.schooloneorg.school.nic.in-cert.pem
+    OrganizationalUnitIdentifier: client
+  PeerOUIdentifier:
+    Certificate: cacerts/ca.schooloneorg.school.nic.in-cert.pem
+    OrganizationalUnitIdentifier: peer

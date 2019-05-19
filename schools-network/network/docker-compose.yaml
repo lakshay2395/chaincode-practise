@@ -1,25 +1,24 @@
 version: '2'
 
+networks:
+  schools:
+
 volumes:
   nic.in:
   peer0.cbseorg.nic.in:
   peer0.schooloneorg.school.nic.in:
   peer0.schooltwoorg.school.nic.in:
-
-networks:
-  schools:
+  
 services:
   cbse-ca:
     image: hyperledger/fabric-ca:latest
     environment:
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca-cbseorg
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.cbseorg.nic.in-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/4ef4f6768ed152d08c555af47a07cb7378c51b0846690b3887da4e4c7429c0bf_sk
     ports:
       - "7054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.cbseorg.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/4ef4f6768ed152d08c555af47a07cb7378c51b0846690b3887da4e4c7429c0bf_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.cbseorg.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/684b54dccef67f5d52054c5d0532870c1fb5090a204fb8e14bd4ba303f8c279e_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/cbseorg.nic.in/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerCBSEOrg
@@ -31,12 +30,10 @@ services:
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca-schooloneorg
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.schooloneorg.school.nic.in-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/3d1aaf89769cd33164bc7dfdd85fa01dfe57639178a29db24c3325ce6ee9d61e_sk
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
     ports:
       - "8054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.schooloneorg.school.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/3d1aaf89769cd33164bc7dfdd85fa01dfe57639178a29db24c3325ce6ee9d61e_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.schooloneorg.school.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/a60a934833e70103a525f37b6b8ce504b113c68ae1234cde231205dd3a631b2a_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerSchoolOneOrg
@@ -48,12 +45,10 @@ services:
     environment:
       - FABRIC_CA_HOME=/etc/hyperledger/fabric-ca-server
       - FABRIC_CA_SERVER_CA_NAME=ca-schooltwoorg
-      - FABRIC_CA_SERVER_TLS_ENABLED=true
-      - FABRIC_CA_SERVER_TLS_CERTFILE=/etc/hyperledger/fabric-ca-server-config/ca.schooltwoorg.school.nic.in-cert.pem
-      - FABRIC_CA_SERVER_TLS_KEYFILE=/etc/hyperledger/fabric-ca-server-config/46ff4d0590cfa9fe44c814633b24c8c8bf8125f23c6435ae181e7cb9163266f4_sk
+      - FABRIC_CA_SERVER_TLS_ENABLED=false
     ports:
       - "9054:7054"
-    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.schooltwoorg.school.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/46ff4d0590cfa9fe44c814633b24c8c8bf8125f23c6435ae181e7cb9163266f4_sk -b admin:adminpw -d'
+    command: sh -c 'fabric-ca-server start --ca.certfile /etc/hyperledger/fabric-ca-server-config/ca.schooltwoorg.school.nic.in-cert.pem --ca.keyfile /etc/hyperledger/fabric-ca-server-config/44e0a31ca29dcd147cb56581ac8f1fb0490622d7b96f3112a0fed8cce3cc30c2_sk -b admin:adminpw -d'
     volumes:
       - ./crypto-config/peerOrganizations/schooltwoorg.school.nic.in/ca/:/etc/hyperledger/fabric-ca-server-config
     container_name: ca_peerSchoolTwooOrg
@@ -67,19 +62,72 @@ services:
     environment:
       - GOPATH=/opt/gopath
       - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
-      - FABRIC_LOGGING_SPEC=info
-      - CORE_PEER_ID=cli
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=peer0.cbseorg.nic.in
       - CORE_PEER_ADDRESS=peer0.cbseorg.nic.in:7051
-      - CORE_PEER_LOCALMSPID=Org1MSP
-      - CORE_PEER_MSPCONFIGPATH=/opt/gopath/src/github.com/hyperledger/fabric/peer/crypto/peerOrganizations/cbseorg.nic.in/users/Admin@cbseorg.nic.in/msp
+      - CORE_PEER_LOCALMSPID=CBSEOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
       - CORE_CHAINCODE_KEEPALIVE=10
-    working_dir: /opt/gopath/src/github.com/hyperledger/fabric/peer
-    command: /bin/bash
+    working_dir: /opt/gopath/src/github.com/chaincode
+    # command: /bin/bash -c '/opt/channel-artifacts/setup.sh'
     volumes:
         - /var/run/:/host/var/run/
-        - ./chaincode/:/opt/gopath/src/github.com/
+        - $GOPATH:/opt/gopath
+        - ./crypto-config/peerOrganizations/cbseorg.nic.in/users/Admin@cbseorg.nic.in/msp:/etc/hyperledger/msp
+        - ../chaincode/:/opt/gopath/src/github.com/chaincode
+        - .:/opt/channel-artifacts
     networks:
         - schools
+
+  cli2:
+    container_name: cli2
+    image: hyperledger/fabric-tools:latest
+    tty: true
+    environment:
+      - GOPATH=/opt/gopath
+      - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+      - FABRIC_LOGGING_SPEC=debug
+      - CORE_PEER_ID=peer0.schooloneorg.school.nic.in
+      - CORE_PEER_ADDRESS=peer0.schooloneorg.school.nic.in:7051
+      - CORE_PEER_LOCALMSPID=SchoolOneOrg
+      - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+      - CORE_CHAINCODE_KEEPALIVE=10
+    working_dir: /opt/gopath/src/github.com/chaincode
+    # command: /bin/bash -c '/opt/channel-artifacts/setup.sh'
+    volumes:
+        - /var/run/:/host/var/run/
+        - $GOPATH:/opt/gopath
+        - ./crypto-config/peerOrganizations/schooloneorg.school.nic.in/users/Admin@schooloneorg.school.nic.in/msp:/etc/hyperledger/msp
+        - ../chaincode/:/opt/gopath/src/github.com/chaincode
+        - .:/opt/channel-artifacts
+    networks:
+        - schools
+
+  # chaincode:
+  #   container_name: chaincode
+  #   image: hyperledger/fabric-ccenv
+  #   tty: true
+  #   environment:
+  #     - GOPATH=/opt/gopath
+  #     - CORE_VM_ENDPOINT=unix:///host/var/run/docker.sock
+  #     - FABRIC_LOGGING_SPEC=debug
+  #     - CORE_PEER_ID=peer0.cbseorg.nic.in
+  #     - CORE_PEER_ADDRESS=peer0.cbseorg.nic.in:7051
+  #     - CORE_PEER_LOCALMSPID=CBSEOrg
+  #     - CORE_PEER_MSPCONFIGPATH=/etc/hyperledger/msp
+  #     - CORE_CHAINCODE_KEEPALIVE=10
+  #   working_dir: /opt/gopath/src/github.com/chaincode
+  #   volumes:
+  #       - /var/run/:/host/var/run/
+  #       - $GOPATH:/opt/gopath
+  #       - ./crypto-config/peerOrganizations/cbseorg.nic.in/peers/peer0.cbseorg.nic.in/msp:/etc/hyperledger/msp
+  #       - ../chaincode/:/opt/gopath/src/github.com/chaincode
+  #   networks:
+  #       - schools
+  #   depends_on:
+  #       - orderer.nic.in
+  #       - peer0.cbseorg.nic.in
+
 
   orderer.nic.in:
     extends:
@@ -125,7 +173,7 @@ services:
     extends:
       file:   docker-compose-base.yaml
       service: couchdb2
-    container_name: couchdb0
+    container_name: couchdb2
     networks:
       - schools
 
